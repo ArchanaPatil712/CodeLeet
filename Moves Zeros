@@ -1,1 +1,24 @@
+Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+Note that you must do this in-place without making a copy of the array.
+
+public class Solution {
+    public void moveZeroes(int[] nums) {
+        // Pointer to track the position where the next non-zero element should go
+        int insertPos = 0;
+
+        // One-pass traversal
+        for (int current = 0; current < nums.length; current++) {
+            // If the current element is non-zero, swap it with the element at insertPos
+            if (nums[current] != 0) {
+                // Perform swap
+                int temp = nums[insertPos];
+                nums[insertPos] = nums[current];
+                nums[current] = temp;
+
+                // Move insertPos forward
+                insertPos++;
+            }
+        }
+    }
+}
 

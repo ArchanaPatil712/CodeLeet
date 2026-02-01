@@ -23,5 +23,24 @@ Each row of this table indicates the ID of a department and its name.
 
 Write a solution to find employees who have the highest salary in each of the departments. Return the result table in any order. The result format is in the following example.
 
+SELECT
+    D.name AS Department,
+    E.name AS Employee,
+    E.salary AS Salary
+FROM
+    Employee E
+JOIN
+    Department D ON E.departmentId = D.id
+WHERE
+    E.salary = (
+        SELECT
+            MAX(E2.salary)
+        FROM
+            Employee E2
+        WHERE
+            E2.departmentId = E.departmentId
+    );
+
+
  
 

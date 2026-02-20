@@ -1,28 +1,32 @@
-CREATE TABLE USERS(
+-- 1. Create Tables with Initial Constraints
+CREATE TABLE USERS (
     UserID INT NOT NULL,
-    UserName VARCHAR (100),
-    Email varchar(100) not null,
-    RegistrationDate date,
-    primary key(UserID)
+    UserName VARCHAR(100),
+    Email VARCHAR(100) NOT NULL,
+    RegistrationDate DATE,
+    PRIMARY KEY (UserID)
 );
 
-CREATE TABLE ACTIVITIES(
+CREATE TABLE ACTIVITIES (
     ActivityID INT NOT NULL,
     UserID INT,
-    ActivityType VARCHAR (50),
-    ActivityDate date,
-    Primary key(ActivityID)
+    ActivityType VARCHAR(50),
+    ActivityDate DATE,
+    PRIMARY KEY (ActivityID)
 );
 
-CREATE TABLE VITALS(
+CREATE TABLE VITALS (
     VitalID INT NOT NULL,
     UserID INT,
-    HeartRate int,
-    BloddPressure varchar(20),
-    RecordedDate date,
-    primary key (VitalID)
+    HeartRate INT,
+    BloodPressure VARCHAR(20), -- Corrected typo: 'BloddPressure' to 'BloodPressure'
+    RecordedDate DATE,
+    PRIMARY KEY (VitalID)
 );
 
-ALTER TABLE USERS DROP PRIMARY KEY, ADD PRIMARY KEY(Email);
+-- 2. Modify USERS Table: Change Primary Key to Email
+-- Note: Email is already NOT NULL, which is required for a Primary Key.
+ALTER TABLE USERS DROP PRIMARY KEY, ADD PRIMARY KEY (Email);
 
+-- 3. Modify ACTIVITIES Table: Remove Primary Key
 ALTER TABLE ACTIVITIES DROP PRIMARY KEY;

@@ -1,1 +1,28 @@
+CREATE TABLE USERS(
+    UserID INT NOT NULL,
+    UserName VARCHAR (100),
+    Email varchar(100) not null,
+    RegistrationDate date,
+    primary key(UserID)
+);
 
+CREATE TABLE ACTIVITIES(
+    ActivityID INT NOT NULL,
+    UserID INT,
+    ActivityType VARCHAR (50),
+    ActivityDate date,
+    Primary key(ActivityID)
+);
+
+CREATE TABLE VITALS(
+    VitalID INT NOT NULL,
+    UserID INT,
+    HeartRate int,
+    BloddPressure varchar(20),
+    RecordedDate date,
+    primary key (VitalID)
+);
+
+ALTER TABLE USERS DROP PRIMARY KEY, ADD PRIMARY KEY(Email);
+
+ALTER TABLE ACTIVITIES DROP PRIMARY KEY;

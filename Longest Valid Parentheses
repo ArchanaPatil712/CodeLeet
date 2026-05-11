@@ -1,1 +1,31 @@
 Given a string containing just the characters '(' and ')', return the length of the longest valid (well-formed) parentheses substring.
+
+class Solution {
+    public int longestValidParentheses(String s) {
+        int maxLength = 0;
+        Stack<Integer> stack = new Stack<>();
+        
+        // Push -1 as the initial base index
+        stack.push(-1);
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                // Store the index of the opening bracket
+                stack.push(i);
+            } else {
+                // Pop the last opening bracket or base index
+                stack.pop();
+                
+                if (stack.isEmpty()) {
+                    // If empty, this ')' is unmatched; it becomes the new base
+                    stack.push(i);
+                } else {
+                    // Calculate length: current index - index of the previous unmatched bracket
+                    maxLength = Math.max(maxLength, i - stack.peek());
+                }
+            }
+        }
+        
+        return maxLength;
+    }
+}

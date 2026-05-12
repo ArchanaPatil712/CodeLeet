@@ -1,0 +1,20 @@
+Given the root of a binary tree, return the inorder traversal of its nodes' values.
+import java.util.ArrayList;
+import java.util.List;
+
+public class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        traverse(root, result);
+        return result;
+    }
+
+    private void traverse(TreeNode node, List<Integer> result) {
+        if (node == null) {
+            return;
+        }
+        traverse(node.left, result);   // Visit left
+        result.add(node.val);          // Visit root
+        traverse(node.right, result);  // Visit right
+    }
+}

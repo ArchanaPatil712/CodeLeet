@@ -1,0 +1,22 @@
+Given a Postfix expression, convert it into a Prefix expression.
+class Solution {
+    private static boolean isOperator(char c){
+        return c=='+'||c=='-'||c=='*'||c=='/'||c=='^'||c=='%';
+    }
+    public static String postToPre(String s) {
+        Stack<String> stack=new Stack<>();
+        for(int i=0;i<s.length();i++){
+            char current=s.charAt(i);
+            if(isOperator(current)){
+                String op1=stack.pop();
+                String op2=stack.pop();
+                String temp =current+op2+op1;
+                stack.push(temp);
+            }
+            else{
+                stack.push(Character.toString(current));
+            }
+        }
+        return stack.pop();
+    }
+}

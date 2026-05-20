@@ -1,0 +1,42 @@
+Given an integer array arr[] and an integer target, determine whether there exists a pair of elements in the array whose product is equal to target.
+Return true if such a pair exists; otherwise, return false.
+
+import java.util.HashSet;
+
+class Solution { 
+    // Optimized method running in O(n) time using a HashSet
+    public boolean isProduct(int[] arr, long target) {
+        // Edge case: A pair cannot exist if there are fewer than 2 elements
+        if (arr == null || arr.length < 2) {
+            return false;
+        }
+
+        HashSet<Long> seen = new HashSet<>();
+
+        for (int num : arr) {
+            // Special handling for zero to avoid DivisionByZero errors
+            if (num == 0) {
+                if (target == 0 && seen.contains(0L)) {
+                    return true;
+                }
+                seen.add(0L);
+                continue;
+            }
+
+            // Check if the current number evenly divides the target
+            if (target % num == 0) {
+                long requiredComplement = target / num;
+                
+                // If the required multiplier was already seen, we found our pair
+                if (seen.contains(requiredComplement)) {
+                    return true;
+                }
+            }
+            
+            // Track the current number as a long to match the HashSet type
+            seen.add((long) num);
+        }
+
+        return false; // No such pair exists
+    } 
+}

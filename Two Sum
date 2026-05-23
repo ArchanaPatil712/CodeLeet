@@ -2,19 +2,20 @@ Given an array of integers nums and an integer target, return indices of the two
 You may assume that each input would have exactly one solution, and you may not use the same element twice.
 You can return the answer in any order.
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
+// 1. Define the Solution class exactly as the platform expects
 class Solution {
     public int[] twoSum(int[] nums, int target) {
-        HashMap<Integer, Integer> map = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
-            int currentNumber = nums[i];
-            int complement = target - currentNumber;
+            int complement = target - nums[i];
             if (map.containsKey(complement)) {
-    
                 return new int[] { map.get(complement), i };
             }
-            map.put(currentNumber, i);
+            map.put(nums[i], i);
         }
-        return new int[] {};
+        return new int[] {}; // Return empty array if no match found
     }
 }

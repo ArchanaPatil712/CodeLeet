@@ -1,0 +1,38 @@
+Given a string s, reverse only all the vowels in the string and return it.
+The vowels are 'a', 'e', 'i', 'o', and 'u', and they can appear in both lower and upper cases, more than once.
+
+class Solution {
+    public String reverseVowels(String s) {
+        char[] chars = s.toCharArray();
+        int left = 0;
+        int right = s.length() - 1;
+        
+        while (left < right) {
+            // Find the next vowel from the left
+            while (left < right && !isVowel(chars[left])) {
+                left++;
+            }
+            // Find the next vowel from the right
+            while (left < right && !isVowel(chars[right])) {
+                right--;
+            }
+            
+            // Swap the vowels found at both ends
+            if (left < right) {
+                char temp = chars[left];
+                chars[left] = chars[right];
+                chars[right] = temp;
+                left++;
+                right--;
+            }
+        }
+        
+        return new String(chars);
+    }
+    
+    // Helper method to check for both lowercase and uppercase vowels
+    private boolean isVowel(char c) {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+               c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+    }
+}

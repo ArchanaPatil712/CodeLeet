@@ -1,0 +1,21 @@
+Given an array arr[] containing only 0 and 1. Find the minimum toggles (switch from 0 to 1 or vice-versa) required such the array become partitioned, i.e., it has first 0s then 1s.
+
+class Solution {
+    int minToggle(int[] arr) {
+        int onesCount = 0;
+        int toggles = 0;
+
+        for (int num : arr) {
+            if (num == 1) {
+                onesCount++;
+            } else {
+                // If it is 0, choose the cheaper option:
+                // 1. Flip this 0 to 1 (toggles + 1)
+                // 2. Flip all previous 1s to 0 (onesCount)
+                toggles = Math.min(toggles + 1, onesCount);
+            }
+        }
+        
+        return toggles;
+    }
+}

@@ -1,0 +1,30 @@
+Given an array arr[] of n integers, modify the array in-place such that each element is replaced with the XOR of its adjacent elements.
+For the first element, update arr[0] = arr[0] ^ arr[1].
+For the last element, update arr[n-1] = arr[n-2] ^ arr[n-1].
+For all other elements, update arr[i] = arr[i-1] ^ arr[i+1].
+Note: Here, a ^ b represents the XOR operation between a and b. 
+
+class Solution {
+    public void replaceElements(int[] arr) {
+        // Handle corner case: array with fewer than 2 elements
+        if (arr == null || arr.length < 2) {
+            return;
+        }
+        
+        int n = arr.length;
+        
+        // Store original arr[0] and update it
+        int prev = arr[0];
+        arr[0] = arr[0] ^ arr[1];
+        
+        // Update middle elements
+        for (int i = 1; i < n - 1; i++) {
+            int curr = arr[i];          // Keep original arr[i]
+            arr[i] = prev ^ arr[i + 1];  // XOR of original neighbors
+            prev = curr;                // Save original arr[i] for the next index
+        }
+        
+        // Update the last element using the original arr[n-2]
+        arr[n - 1] = prev ^ arr[n - 1];
+    }
+}

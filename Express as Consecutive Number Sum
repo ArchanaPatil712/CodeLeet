@@ -1,0 +1,14 @@
+Given a number n, find whether n can be expressed as sum of two or more consecutive positive numbers.
+
+class Solution {
+    public boolean isSumOfConsecutive(int n) {
+        // Numbers less than or equal to 2 cannot be expressed as a sum of consecutive positive numbers.
+        if (n <= 2) {
+            return false;
+        }
+        
+        // Check if n is NOT a power of 2 using bitwise AND operation.
+        // A power of 2 has only one bit set, so (n & (n - 1)) will be 0.
+        return (n & (n - 1)) != 0;
+    }
+}

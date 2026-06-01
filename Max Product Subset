@@ -1,0 +1,70 @@
+Given an array arr[], find and return the maximum product possible with the subset of elements present in the array.
+Note:
+The maximum product can be of a single element also.
+Since the product can be large, return it modulo 109 + 7.
+
+import java.util.*;
+
+class Solution {
+    public int findMaxProduct(int[] arr) {
+        int n = arr.length;
+        
+        // Edge case: single element array
+        if (n == 1) {
+            return arr[0];
+        }
+
+        long MOD = 1000000007L;
+        int maxNeg = Integer.MIN_VALUE;
+        int negCount = 0;
+        int zeroCount = 0;
+        int posCount = 0;
+        
+        // Count elements and track the largest negative number
+        for (int num : arr) {
+            if (num == 0) {
+                zeroCount++;
+            } else if (num < 0) {
+                negCount++;
+                maxNeg = Math.max(maxNeg, num);
+            } else {
+                posCount++;
+            }
+        }
+
+        // Case 1: The array contains only zeros
+        if (zeroCount == n) {
+            return 0;
+        }
+
+        // Case 2: No positive numbers and exactly one negative number
+        if (posCount == 0 && negCount == 1) {
+            if (zeroCount > 0) {
+                return 0; // Keeping 0 gives a product of 0, which is larger than a negative number
+            }
+            return maxNeg;
+        }
+
+        long prod = 1;
+        boolean skippedMaxNeg = false;
+
+        // Calculate the product
+        for (int num : arr) {
+            if (num == 0) {
+                continue;
+            }
+            
+            // If total negatives are odd, skip the largest negative number once
+            if (negCount % 2 != 0 && num == maxNeg && !skippedMaxNeg) {
+                skippedMaxNeg = true;
+                continue;
+            }
+            
+            // Multiply the absolute values and take modulo at each step
+            long val = Math.abs((long) num);
+            prod = (prod * val) % MOD;
+        }
+
+        return (int) prod;
+    }
+}

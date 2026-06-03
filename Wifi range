@@ -1,1 +1,26 @@
+There are n rooms in a straight line in Geekland State University's hostel. You are given a binary string s of length n, where s[i] = '1' means there is a WiFi router in the i-th room, and s[i] = '0' means there is no WiFi in that room.
+Each WiFi router has a range of x, meaning it can cover up to x rooms to its left and x rooms to its right.
+Given x and s, determine whether all rooms are covered by at least one WiFi router. Return true if all rooms are covered; otherwise, return false.
+
+class Solution {
+    public boolean wifiRange(String s, int x) {
+        int n = s.length();
+        // Tracks the maximum index (0-indexed) that is covered by WiFi
+        int maxCovered = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (s.charAt(i) == '1') {
+                // If a room needs coverage before this router's left reach
+                if (i - x > maxCovered + 1) {
+                    return false;
+                }
+                // Update the maximum index this router can reach to the right
+                maxCovered = Math.max(maxCovered, i + x);
+            }
+        }
+
+        // After checking all routers, ensure the very last room is covered
+        return maxCovered >= n - 1;
+    }
+}
 

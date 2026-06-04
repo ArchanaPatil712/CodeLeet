@@ -1,0 +1,39 @@
+Given a binary string s consisting of 0s and 1s. Find the maximum difference of the number of 0s and the number of 1s (number of 0s – number of 1s) in a substring of the string.
+Note: In the case of all 1s, the answer will be -1.
+
+class Solution {
+    int maxSubstring(String s) {
+        int max_so_far = -1;
+        int curr_max = 0;
+        boolean allOnes = true;
+
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            
+            // Map '0' to 1 and '1' to -1
+            int val = (ch == '0') ? 1 : -1;
+            
+            if (ch == '0') {
+                allOnes = false; // Found at least one '0'
+            }
+
+            curr_max += val;
+
+            if (curr_max > max_so_far) {
+                max_so_far = curr_max;
+            }
+
+            // If the local window drops below 0, reset it
+            if (curr_max < 0) {
+                curr_max = 0;
+            }
+        }
+
+        // Edge case: If the string consists entirely of 1s
+        if (allOnes) {
+            return -1;
+        }
+
+        return max_so_far;
+    }
+}

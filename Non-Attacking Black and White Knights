@@ -1,0 +1,27 @@
+Given two integers n and m representing the dimensions of a chessboard, find the number of ways to place one black knight and one white knight on the chessboard such that they cannot attack each other.
+Note:
+The knights have to be placed on different squares.
+A knight can move two squares horizontally and one square vertically (L shaped), or two squares vertically and one square horizontally (L shaped).
+The knights attack each other if one can reach the other in one move
+
+class Solution {
+    public long numOfWays(int n, int m) {
+        // Convert to long to prevent integer overflow during multiplication
+        long N = (long) n;
+        long M = (long) m;
+        
+        // Total ways to place two distinct knights on the board
+        long totalSquares = N * M;
+        long totalWays = totalSquares * (totalSquares - 1);
+        
+        // Calculate the number of 2x3 and 3x2 attacking blocks
+        long attack2x3 = (N >= 1 && M >= 2) ? (N - 1) * (M - 2) : 0;
+        long attack3x2 = (N >= 2 && M >= 1) ? (N - 2) * (M - 1) : 0;
+        
+        // Each block contributes 4 distinct attacking configurations (2 pairs * 2 color permutations)
+        long attackingWays = 4 * (attack2x3 + attack3x2);
+        
+        // Safe ways = Total ways - Attacking ways
+        return totalWays - attackingWays;
+    }
+}

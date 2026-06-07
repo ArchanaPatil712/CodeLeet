@@ -1,0 +1,21 @@
+Consider a special family of Engineers and Doctors with following rules :
+Everybody has two children.
+First child of an Engineer is an Engineer and second child is a Doctor.
+First child of an Doctor is Doctor and second child is an Engineer.
+All generations of Doctors and Engineers start with Engineer.
+The first few levels of the family tree are shown below :
+Given level and position (pos) of a person in above ancestor tree, find profession of the person.
+
+class Solution {
+    public String profession(int level, int pos) {
+        // Count the number of set bits (1s) in (pos - 1)
+        int setBits = Integer.bitCount(pos - 1);
+        
+        // If the number of 1s is even, it's an Engineer. If odd, it's a Doctor.
+        if (setBits % 2 == 0) {
+            return "Engineer";
+        } else {
+            return "Doctor";
+        }
+    }
+}

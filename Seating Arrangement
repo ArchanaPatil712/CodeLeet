@@ -3,33 +3,35 @@ Determine whether it is possible to seat all k people such that no two occupied 
 
 class Solution {
     public boolean canSeatAllPeople(int k, int[] seats) {
-        // If no people need to be seated, it's always possible
-        if (k <= 0) {
-            return true;
+        int length = seats.length;
+        
+        // Step 1: Check if the initial arrangement is already invalid
+        for (int i = 0; i < length - 1; i++) {
+            if (seats[i] == 1 && seats[i + 1] == 1) {
+                return false;
+            }
         }
         
-        int count = 0;
-        int n = seats.length;
-        
-        for (int i = 0; i < n; i++) {
-            // Check if the current seat and its neighbors are empty
+        // Step 2: Greedily place the k people
+        for (int i = 0; i < length; i++) {
+            if (k <= 0) {
+                return true; 
+            }
+            
             if (seats[i] == 0) {
-                boolean leftEmpty = (i == 0 || seats[i - 1] == 0);
-                boolean rightEmpty = (i == n - 1 || seats[i + 1] == 0);
+                boolean leftEmpty = (i == 0) || (seats[i - 1] == 0);
+                boolean rightEmpty = (i == length - 1) || (seats[i + 1] == 0);
                 
                 if (leftEmpty && rightEmpty) {
-                    // Seat the person here
-                    seats[i] = 1;
-                    count++;
-                    
-                    // Early exit if we have successfully seated all k people
-                    if (count >= k) {
-                        return true;
-                    }
+                    seats[i] = 1; // Seat the person
+                    k--;          // Decrement remaining people
+                    i++;          // Skip the next seat since it cannot be used now
                 }
             }
         }
         
-        return count >= k;
+        return k <= 0;
     }
+}
+
 }

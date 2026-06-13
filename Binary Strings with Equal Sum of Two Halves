@@ -1,0 +1,35 @@
+Given a number n, find count of all binary sequences of length 2n such that sum of first n bits is same as sum of last n bits. 
+Note: Since the anwer can be very large, so return the answer modulo 109+7.
+
+class Solution {
+    private static final int MOD = 1000000007;
+
+    public int computeValue(int n) {
+        long num = 1;
+        long den = 1;
+
+        // Calculate (2n)! / (n! * n!) optimally in one pass
+        for (int i = 1; i <= n; i++) {
+            num = (num * (n + i)) % MOD;
+            den = (den * i) % MOD;
+        }
+
+        // Result = num * den^(MOD - 2) % MOD
+        long ans = (num * power(den, MOD - 2)) % MOD;
+        return (int) ans;
+    }
+
+    // Binary exponentiation to find modular inverse
+    private long power(long base, long exp) {
+        long res = 1;
+        base = base % MOD;
+        while (exp > 0) {
+            if ((exp & 1) == 1) {
+                res = (res * base) % MOD;
+            }
+            base = (base * base) % MOD;
+            exp >>= 1;
+        }
+        return res;
+    }
+}

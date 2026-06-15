@@ -1,0 +1,40 @@
+Given a bag of size w kg and you are provided costs of packets different weights of oranges in array cost[], find the minimum total cost to buy exactly w kg oranges
+The cost of 1 kg orange is present at index 0 and in general arr[i] has cost of (i+1) kg orange.
+cost[i] = -1 means that 'i+1' kg packet of orange is unavailable.
+If it is not possible to buy exactly w kg oranges then return -1. It may be assumed that there is an infinite supply of all available packet types.
+
+class Solution {
+    public int minimumCost(int[] cost, int w) {
+        int n = cost.length;
+        // Use an array to store the minimum cost for each weight from 0 to w
+        int[] dp = new int[w + 1];
+        
+        // Initialize the array with a large value representing infinity
+        // Integer.MAX_VALUE is avoided to prevent arithmetic overflow when adding costs
+        for (int i = 1; i <= w; i++) {
+            dp[i] = Integer.MAX_VALUE;
+        }
+        
+        // Base case: The cost to buy 0 kg of oranges is 0
+        dp[0] = 0;
+        
+        // Iterate through all target weights from 1 to w
+        for (int i = 1; i <= w; i++) {
+            // Check every available packet size
+            for (int j = 0; j < n; j++) {
+                int weight = j + 1;
+                
+                // Only process if the packet is available and fits in the current weight
+                if (cost[j] != -1 && weight <= i) {
+                    // Check if the remaining weight state is reachable
+                    if (dp[i - weight] != Integer.MAX_VALUE) {
+                        dp[i] = Math.min(dp[i], dp[i - weight] + cost[j]);
+                    }
+                }
+            }
+        }
+        
+        // If dp[w] is still infinity, it is impossible to make exactly w kg
+        return dp[w] == Integer.MAX_VALUE ? -1 : dp[w];
+    }
+}

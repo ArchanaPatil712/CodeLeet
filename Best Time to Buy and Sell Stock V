@@ -1,0 +1,73 @@
+You are given an integer array prices where prices[i] is the price of a stock in dollars on the ith day, and an integer k.
+You are allowed to make at most k transactions, where each transaction can be either of the following:
+Normal transaction: Buy on day i, then sell on a later day j where i < j. You profit prices[j] - prices[i].
+Short selling transaction: Sell on day i, then buy back on a later day j where i < j. You profit prices[i] - prices[j].
+Note that you must complete each transaction before starting another. Additionally, you can't buy or sell on the same day you are selling or buying back as part of a previous transaction.
+Return the maximum total profit you can earn by making at most k transactions.
+
+class Solution {
+    public long maximumProfit(int[] prices, int k) {
+        if (prices == null || prices.length < 2 || k == 0) {
+            return 0L;
+        }
+
+        int n = prices.length;
+        // Cap k because each valid transaction requires at least 2 distinct days
+        k = Math.min(k, n / 2);
+
+        // dp[t] represents the max profit with 't' transaction counts remaining
+        long[] idle = new long[k + 1];
+        long[] normal = new long[k + 1];
+        long[] shortSell = new long[k + 1];
+
+        // A small sentinel value representing an unreachable state without underflowing
+        long INF = Long.MAX_VALUE / 4;
+
+        // Initialize states
+        for (int i = 0; i < k; i++) {
+            idle[i] = -INF;
+        }
+        idle[k] = 0L; // We start with k available transactions and 0 profit
+
+        for (int i = 0; i <= k; i++) {
+            normal[i] = -INF;
+            shortSell[i] = -INF;
+        }
+
+        // Iterate through each day's price
+        for (int price : prices) {
+            long[] nextIdle = idle.clone();
+            long[] nextNormal = normal.clone();
+            long[] nextShortSell = shortSell.clone();
+
+            for (int t = 0; t <= k; t++) {
+                // 1. CHOOSE TO CLOSE POSITIONS TODAY (We return to the idle pool)
+                if (normal[t] > -INF) {
+                    nextIdle[t] = Math.max(nextIdle[t], normal[t] + price);
+                }
+                if (shortSell[t] > -INF) {
+                    nextIdle[t] = Math.max(nextIdle[t], shortSell[t] - price);
+                }
+
+                // 2. CHOOSE TO OPEN POSITIONS TODAY (Consumes 1 transaction allowance: t -> t-1)
+                if (t > 0 && idle[t] > -INF) {
+                    nextNormal[t - 1] = Math.max(nextNormal[t - 1], idle[t] - price);
+                    nextShortSell[t - 1] = Math.max(nextShortSell[t - 1], idle[t] + price);
+                }
+            }
+
+            // Commit today's state transitions
+            idle = nextIdle;
+            normal = nextNormal;
+            shortSell = nextShortSell;
+        }
+
+        // Find the absolute highest profit achieved in any completed state
+        long maxProfit = 0L;
+        for (int t = 0; t <= k; t++) {
+            maxProfit = Math.max(maxProfit, idle[t]);
+        }
+
+        return maxProfit;
+    }
+}

@@ -1,0 +1,51 @@
+Given a reference of a node in a connected undirected graph.
+Return a deep copy (clone) of the graph.
+Each node in the graph contains a value (int) and a list (List[Node]) of its neighbors.
+class Node {
+    public int val;
+    public List<Node> neighbors;
+}
+
+import java.util.*;
+
+class Solution {
+    public Node cloneGraph(Node node) {
+        // Base case: if the graph is empty, return null
+        if (node == null) {
+            return null;
+        }
+
+        // Map to keep track of already cloned nodes to avoid cycles
+        // Key: Original Node, Value: Cloned Node
+        Map<Node, Node> visited = new HashMap<>();
+
+        // Create the clone for the starting node
+        visited.put(node, new Node(node.val));
+
+        // Queue for BFS traversal
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(node);
+
+        // Traverse the graph
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+
+            // Check all neighbors of the current original node
+            for (Node neighbor : current.neighbors) {
+                // If the neighbor hasn't been cloned yet
+                if (!visited.containsKey(neighbor)) {
+                    // Clone the neighbor and add it to the map
+                    visited.put(neighbor, new Node(neighbor.val));
+                    // Queue the original neighbor to process its edges later
+                    queue.add(neighbor);
+                }
+
+                // Add the cloned neighbor to the cloned current node's neighbor list
+                visited.get(current).neighbors.add(visited.get(neighbor));
+            }
+        }
+
+        // Return the clone of the initial input node
+        return visited.get(node);
+    }
+}

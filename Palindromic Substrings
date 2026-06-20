@@ -1,0 +1,39 @@
+Given a string s, return the number of palindromic substrings in it.
+A string is a palindrome when it reads the same backward as forward.
+A substring is a contiguous sequence of characters within the string.
+
+class Solution {
+    public int countSubstrings(String s) {
+        // Handle empty string edge case
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+
+        int totalPalindromes = 0;
+        int n = s.length();
+
+        // Treat every index as a potential center
+        for (int i = 0; i < n; i++) {
+            // Case 1: Odd-length palindromes (e.g., "aba" centered at 'b')
+            totalPalindromes += expandAndCount(s, i, i);
+
+            // Case 2: Even-length palindromes (e.g., "abba" centered between 'b' and 'b')
+            totalPalindromes += expandAndCount(s, i, i + 1);
+        }
+
+        return totalPalindromes;
+    }
+
+    private int expandAndCount(String s, int left, int right) {
+        int count = 0;
+
+        // Expand outwards as long as the letters match and pointers stay within boundaries
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            count++;   // Valid palindrome found
+            left--;    // Move left pointer outward
+            right++;   // Move right pointer outward
+        }
+
+        return count;
+    }
+}

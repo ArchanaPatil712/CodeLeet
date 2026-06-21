@@ -1,0 +1,30 @@
+Given an array nums containing n distinct numbers in the range [0, n], return the only number in the range that is missing from the array.
+//Brute force Solution
+class Solution {
+    public int missingNumber(int[] nums) {
+        int n = nums.length;
+        // Calculate the expected sum of numbers from 0 to n
+        int expectedSum = (n * (n + 1)) / 2;
+        
+        // Calculate the actual sum of elements in the array
+        int actualSum = 0;
+        for (int num : nums) {
+            actualSum += num;
+        }
+        
+        // The difference is the missing number
+        return expectedSum - actualSum;
+    }
+}
+
+//Optimal Solution(Bitwise)
+class Solution {
+    public int missingNumber(int[] nums) {
+        int xor = nums.length;
+        for (int i = 0; i < nums.length; i++) {
+            xor ^= i ^ nums[i];
+        }
+        return xor;
+    }
+}
+

@@ -1,0 +1,37 @@
+You are given an integer array nums and two integers indexDiff and valueDiff.
+Find a pair of indices (i, j) such that:
+i != j,
+abs(i - j) <= indexDiff.
+abs(nums[i] - nums[j]) <= valueDiff, and
+Return true if such pair exists or false otherwise.
+
+import java.util.TreeSet;
+
+public class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int indexDiff, int valueDiff) {
+        // A TreeSet maintains elements in sorted order for binary search lookups
+        TreeSet<Long> window = new TreeSet<>();
+        
+        for (int i = 0; i < nums.length; i++) {
+            long currentVal = (long) nums[i];
+            
+            // Find the successor: smallest element >= (currentVal - valueDiff)
+            Long floorCandidate = window.ceiling(currentVal - valueDiff);
+            
+            // Check if this successor also satisfies the upper bound <= (currentVal + valueDiff)
+            if (floorCandidate != null && floorCandidate <= currentVal + valueDiff) {
+                return true;
+            }
+            
+            // Add the current number to the sliding window
+            window.add(currentVal);
+            
+            // Keep the window size at most indexDiff by removing the oldest element
+            if (window.size() > indexDiff) {
+                window.remove((long) nums[i - indexDiff]);
+            }
+        }
+        
+        return false;
+    }
+}

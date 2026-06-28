@@ -1,0 +1,66 @@
+There is an m x n rectangular island that borders both the Pacific Ocean and Atlantic Ocean. The Pacific Ocean touches the island's left and top edges, and the Atlantic Ocean touches the island's right and bottom edges.
+The island is partitioned into a grid of square cells. You are given an m x n integer matrix heights where heights[r][c] represents the height above sea level of the cell at coordinate (r, c).
+The island receives a lot of rain, and the rain water can flow to neighboring cells directly north, south, east, and west if the neighboring cell's height is less than or equal to the current cell's height. Water can flow from any cell adjacent to an ocean into the ocean.
+Return a 2D list of grid coordinates result where result[i] = [ri, ci] denotes that rain water can flow from cell (ri, ci) to both the Pacific and Atlantic oceans.
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+class Solution {
+    public List<List<Integer>> pacificAtlantic(int[][] heights) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (heights == null || heights.length == 0 || heights[0].length == 0) {
+            return result;
+        }
+
+        int m = heights.length;
+        int n = heights[0].length;
+
+        // Matrices to track cells that can reach each ocean
+        boolean[][] pacificReachable = new boolean[m][n];
+        boolean[][] atlanticReachable = new boolean[m][n];
+
+        // Step 1: Run DFS from Top (Pacific) and Bottom (Atlantic) edges
+        for (int c = 0; c < n; c++) {
+            dfs(0, c, heights, pacificReachable, heights[0][c]);       // Top row
+            dfs(m - 1, c, heights, atlanticReachable, heights[m - 1][c]); // Bottom row
+        }
+
+        // Step 2: Run DFS from Left (Pacific) and Right (Atlantic) edges
+        for (int r = 0; r < m; r++) {
+            dfs(r, 0, heights, pacificReachable, heights[r][0]);       // Left column
+            dfs(r, n - 1, heights, atlanticReachable, heights[r][n - 1]); // Right column
+        }
+
+        // Step 3: Find the intersection where cells can reach both oceans
+        for (int r = 0; r < m; r++) {
+            for (int c = 0; c < n; c++) {
+                if (pacificReachable[r][c] && atlanticReachable[r][c]) {
+                    result.add(Arrays.asList(r, c));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void dfs(int r, int c, int[][] heights, boolean[][] reachable, int prevHeight) {
+        int m = heights.length;
+        int n = heights[0].length;
+
+        // Base cases for out of bounds, already visited, or water cannot flow uphill
+        if (r < 0 || r >= m || c < 0 || c >= n || reachable[r][c] || heights[r][c] < prevHeight) {
+            return;
+        }
+
+        // Mark current cell as reachable
+        reachable[r][c] = true;
+
+        // Traverse in all 4 directions
+        dfs(r - 1, c, heights, reachable, heights[r][c]); // North
+        dfs(r + 1, c, heights, reachable, heights[r][c]); // South
+        dfs(r, c - 1, heights, reachable, heights[r][c]); // West
+        dfs(r, c + 1, heights, reachable, heights[r][c]); // East
+    }
+}

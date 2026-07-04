@@ -1,0 +1,18 @@
+Write a bash script to calculate the frequency of each word in a text file words.txt.
+For simplicity sake, you may assume:
+words.txt contains only lowercase characters and space ' ' characters.
+Each word must consist of lowercase characters only.
+Words are separated by one or more whitespace characters.
+
+# Read from the file words.txt and output the word frequency list to stdout.
+#!/bin/bash
+
+# Check if the file exists
+if [ ! -f words.txt ]; then
+    echo "Error: words.txt not found."
+    exit 1
+fi
+
+# Convert all whitespace to newlines, remove empty lines, count, and sort by frequency descending
+tr -s '[:space:]' '\n' < words.txt | grep -v '^$' | sort | uniq -c | sort -nr | awk '{print $2, $1}'
+

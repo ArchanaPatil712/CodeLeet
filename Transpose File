@@ -1,0 +1,12 @@
+Given a text file file.txt, transpose its content.
+You may assume that each row has the same number of columns, and each field is separated by the ' ' character.
+
+while read -r -a row; do
+    for i in "${!row[@]}"; do
+        matrix[i]+="${row[i]} "
+    done
+done < file.txt
+
+for line in "${matrix[@]}"; do
+    echo "${line% }"
+done

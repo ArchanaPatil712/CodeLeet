@@ -1,0 +1,52 @@
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai.
+For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+Return true if you can finish all courses. Otherwise, return false.
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        // 1. Initialize adjacency list and array to track course in-degrees
+        int[] inDegree = new int[numCourses];
+        java.util.List<Integer>[] graph = new java.util.ArrayList[numCourses];
+        
+        for (int i = 0; i < numCourses; i++) {
+            graph[i] = new java.util.ArrayList<>();
+        }
+        
+        // 2. Build the graph layout
+        for (int[] prereq : prerequisites) {
+            int course = prereq[0];
+            int next = prereq[1];
+            graph[next].add(course);
+            inDegree[course]++;
+        }
+        
+        // 3. Queue all courses with zero prerequisites
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (inDegree[i] == 0) {
+                queue.offer(i);
+            }
+        }
+        
+        // 4. Process the queue
+        int completedCourses = 0;
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            completedCourses++;
+            
+            // Reduce dependency counts for downstream courses
+            for (int neighbor : graph[current]) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        
+        // 5. Successful if we cleared every single course
+        return completedCourses == numCourses;
+    }
+}

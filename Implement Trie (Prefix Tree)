@@ -1,0 +1,74 @@
+A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently store and retrieve keys in a dataset of strings. There are various applications of this data structure, such as autocomplete and spellchecker.
+
+Implement the Trie class:
+
+Trie() Initializes the trie object.
+void insert(String word) Inserts the string word into the trie.
+boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before), and false otherwise.
+boolean startsWith(String prefix) Returns true if there is a previously inserted string word that has the prefix prefix, and false otherwise.
+
+class Trie {
+    // Inner node class to represent each character in the tree
+    private class TrieNode {
+        private TrieNode[] children;
+        private boolean isEndOfWord;
+
+        public TrieNode() {
+            // 26 links for English lowercase letters 'a' through 'z'
+            this.children = new TrieNode[26];
+            this.isEndOfWord = false;
+        }
+    }
+
+    private TrieNode root;
+
+    /** Initializes the trie object. */
+    public Trie() {
+        root = new TrieNode();
+    }
+    
+    /** Inserts the string word into the trie. */
+    public void insert(String word) {
+        TrieNode current = root;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            int index = ch - 'a'; // Convert char to 0-25 index
+            
+            if (current.children[index] == null) {
+                current.children[index] = new TrieNode();
+            }
+            current = current.children[index];
+        }
+        current.isEndOfWord = true;
+    }
+    
+    /** Returns true if the string word is in the trie, and false otherwise. */
+    public boolean search(String word) {
+        TrieNode current = root;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            int index = ch - 'a';
+            
+            if (current.children[index] == null) {
+                return false;
+            }
+            current = current.children[index];
+        }
+        return current.isEndOfWord;
+    }
+    
+    /** Returns true if there is a previously inserted string word that has the prefix, and false otherwise. */
+    public boolean startsWith(String prefix) {
+        TrieNode current = root;
+        for (int i = 0; i < prefix.length(); i++) {
+            char ch = prefix.charAt(i);
+            int index = ch - 'a';
+            
+            if (current.children[index] == null) {
+                return false;
+            }
+            current = current.children[index];
+        }
+        return true;
+    }
+}

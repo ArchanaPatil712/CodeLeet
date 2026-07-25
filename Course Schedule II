@@ -1,0 +1,59 @@
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai.
+
+For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+Return the ordering of courses you should take to finish all courses. If there are many valid answers, return any of them. If it is impossible to finish all courses, return an empty array.
+
+import java.util.*;
+
+class Solution {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        // 1. Create the adjacency list and indegree array
+        List<List<Integer>> adjList = new ArrayList<>();
+        for (int i = 0; i < numCourses; i++) {
+            adjList.add(new ArrayList<>());
+        }
+        int[] indegree = new int[numCourses];
+
+        // 2. Build the graph: [course, prerequisite] -> prerequisite -> course
+        for (int[] edge : prerequisites) {
+            int dest = edge[0];
+            int src = edge[1];
+            adjList.get(src).add(dest);
+            indegree[dest]++;
+        }
+
+        // 3. Add all courses with 0 prerequisites to the queue
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] == 0) {
+                queue.offer(i);
+            }
+        }
+
+        // 4. Process the courses
+        int[] order = new int[numCourses];
+        int index = 0;
+
+        while (!queue.isEmpty()) {
+            int currentCourse = queue.poll();
+            order[index++] = currentCourse;
+
+            // Reduce indegree for all dependent courses
+            for (int neighbor : adjList.get(currentCourse)) {
+                indegree[neighbor]--;
+                // If all prerequisites are cleared, add to queue
+                if (indegree[neighbor] == 0) {
+                    queue.offer(neighbor);
+                }
+            }
+        }
+
+        // 5. If index equals numCourses, a valid order exists
+        if (index == numCourses) {
+            return order;
+        }
+        
+        // Circular dependency detected, impossible to finish
+        return new int[0];
+    }
+}

@@ -1,0 +1,82 @@
+Given an m x n board of characters and a list of strings words, return all words on the board.
+
+Each word must be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+class TrieNode {
+    // Map handles any character set efficiently
+    Map<Character, TrieNode> children = new HashMap<>();
+    String word = null;
+}
+
+class Solution {
+    public List<String> findWords(char[][] board, String[] words) {
+        List<String> result = new ArrayList<>();
+        
+        // Step 1: Build the Trie
+        TrieNode root = new TrieNode();
+        for (String word : words) {
+            TrieNode node = root;
+            for (char ch : word.toCharArray()) {
+                node.children.putIfAbsent(ch, new TrieNode());
+                node = node.children.get(ch);
+            }
+            node.word = word; // Store the full word at the leaf node
+        }
+        
+        int rows = board.length;
+        int cols = board[0].length;
+        
+        // Step 2: Traverse every cell on the board
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (root.children.containsKey(board[r][c])) {
+                    dfs(board, r, c, root, result);
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    private void dfs(char[][] board, int r, int c, TrieNode parent, List<String> result) {
+        char ch = board[r][c];
+        TrieNode currNode = parent.children.get(ch);
+        
+        // Match found
+        if (currNode.word != null) {
+            result.add(currNode.word);
+            currNode.word = null; // Avoid duplicate entries
+        }
+        
+        // Mark cell as visited
+        board[r][c] = '#';
+        
+        // Explore 4 directions
+        int[] dr = {-1, 1, 0, 0};
+        int[] dc = {0, 0, -1, 1};
+        
+        for (int i = 0; i < 4; i++) {
+            int nr = r + dr[i];
+            int nc = c + dc[i];
+            
+            if (nr >= 0 && nr < board.length && nc >= 0 && nc < board[0].length) {
+                if (currNode.children.containsKey(board[nr][nc])) {
+                    dfs(board, nr, nc, currNode, result);
+                }
+            }
+        }
+        
+        // Restore cell (backtrack)
+        board[r][c] = ch;
+        
+        // Step 3: Trie Pruning optimization
+        if (currNode.children.isEmpty()) {
+            parent.children.remove(ch);
+        }
+    }
+}

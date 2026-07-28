@@ -1,0 +1,23 @@
+A sequence of numbers is called an arithmetic progression if the difference between any two consecutive elements is the same.
+Given an array of numbers arr, return true if the array can be rearranged to form an arithmetic progression. Otherwise, return false.
+
+import java.util.Arrays;
+
+class Solution {
+    public boolean canMakeArithmeticProgression(int[] arr) {
+        // Step 1: Sort the array to order the sequence
+        Arrays.sort(arr);
+        
+        // Step 2: Establish the required common difference
+        int diff = arr[1] - arr[0];
+        
+        // Step 3: Verify that every consecutive pair matches this difference
+        for (int i = 2; i < arr.length; i++) {
+            if (arr[i] - arr[i - 1] != diff) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}

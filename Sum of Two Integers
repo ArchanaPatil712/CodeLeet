@@ -1,0 +1,12 @@
+Given two integers a and b, return the sum of the two integers without using the operators + and "-."
+
+public class Solution {
+    public int getSum(int a, int b) {
+        while (b != 0) {
+            int carry = (a & b) << 1; // Find the carry bits and shift left
+            a = a ^ b;                // Add without carrying
+            b = carry;                // Move carry to b for the next loop
+        }
+        return a;
+    }
+}

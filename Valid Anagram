@@ -1,0 +1,27 @@
+Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+public class AnagramOptimal {
+    public static boolean isAnagram(String s, String t) {
+        // Condition 1: Must be the same length
+        if (s.length() != t.length()) {
+            return false;
+        }
+
+        // Frequency counter for 26 lowercase English letters
+        int[] charCounts = new int[26];
+
+        // Fill counts: +1 for s characters, -1 for t characters
+        for (int i = 0; i < s.length(); i++) {
+            charCounts[s.charAt(i) - 'a']++;
+            charCounts[t.charAt(i) - 'a']--;
+        }
+
+        // If it is a true anagram, all buckets must return to 0
+        for (int count : charCounts) {
+            if (count != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}

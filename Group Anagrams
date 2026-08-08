@@ -1,0 +1,34 @@
+Given an array of strings strs, group the anagrams together. You can return the answer in any order.
+
+import java.util.*;
+
+public class Solution {
+    public List<List<String>> groupAnagramsOptimal(String[] strs) {
+        if (strs == null || strs.length == 0) return new ArrayList<>();
+        
+        Map<String, List<String>> map = new HashMap<>();
+        
+        for (String s : strs) {
+            int[] count = new int[26];
+            // Count frequencies of each character
+            for (char c : s.toCharArray()) {
+                count[c - 'a']++;
+            }
+            
+            // Build a unique string key from the frequency array
+            StringBuilder sb = new StringBuilder();
+            for (int val : count) {
+                sb.append('#').append(val);
+            }
+            String key = sb.toString();
+            
+            // Group the string by its frequency key
+            if (!map.containsKey(key)) {
+                map.put(key, new ArrayList<>());
+            }
+            map.get(key).add(s);
+        }
+        
+        return new ArrayList<>(map.values());
+    }
+}

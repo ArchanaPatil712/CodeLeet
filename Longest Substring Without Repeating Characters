@@ -1,0 +1,28 @@
+Given a string s, find the length of the longest substring without duplicate characters.
+class Solution {
+    public int lengthOfLongestSubstring(String s) { // Standard method name matching LeetCode
+        int[] charIndex = new int[128];
+        int start = 0;
+        int maxlength = 0;
+        
+        for (int i = 0; i < 128; i++) {
+            charIndex[i] = -1;
+        }
+        
+        // 1. Fixed the loop condition (changed '=' to '<')
+        for (int end = 0; end < s.length(); end++) {
+            char currentchar = s.charAt(end);
+            
+            // 2. Fixed the typo in the bracket and condition closure
+            if (charIndex[currentchar] >= start) {
+                start = charIndex[currentchar] + 1;
+            }
+            
+            // 3. Added the missing step to update the character's last seen position
+            charIndex[currentchar] = end;
+            
+            maxlength = Math.max(maxlength, end - start + 1);
+        }
+        return maxlength;
+    }
+}

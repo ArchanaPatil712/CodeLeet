@@ -1,0 +1,53 @@
+Convert a non-negative integer num to its English words representation.
+
+class Solution {
+    // Arrays for mapping numbers to English words
+    private final String[] LESS_THAN_20 = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    private final String[] TENS = {"", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+    private final String[] THOUSANDS = {"", "Thousand", "Million", "Billion"};
+
+    public String numberToWords(int num) {
+        // Edge case: input is exactly 0
+        if (num == 0) {
+            return "Zero";
+        }
+
+        StringBuilder words = new StringBuilder();
+        int groupIndex = 0;
+
+        // Process the number in chunks of three digits (from right to left)
+        while (num > 0) {
+            int chunk = num % 1000;
+            if (chunk != 0) {
+                // Parse the 3-digit chunk and append the appropriate scale (Thousand/Million/Billion)
+                String chunkResult = parseChunk(chunk).trim();
+                String scale = THOUSANDS[groupIndex];
+                
+                // Construct the string while maintaining proper spacing
+                if (scale.isEmpty()) {
+                    words.insert(0, chunkResult + " ");
+                } else {
+                    words.insert(0, chunkResult + " " + scale + " ");
+                }
+            }
+            num /= 1000;
+            groupIndex++;
+        }
+
+        // Trim any trailing spaces before returning
+        return words.toString().trim();
+    }
+
+    // Helper method to parse any number less than 1000
+    private String parseChunk(int num) {
+        if (num == 0) {
+            return "";
+        } else if (num < 20) {
+            return LESS_THAN_20[num] + " ";
+        } else if (num < 100) {
+            return TENS[num / 10] + " " + parseChunk(num % 10);
+        } else {
+            return LESS_THAN_20[num / 100] + " Hundred " + parseChunk(num % 100);
+        }
+    }
+}

@@ -1,0 +1,39 @@
+Given an integer n, return the least number of perfect square numbers that sum to n.
+A perfect square is an integer that is the square of an integer; in other words, it is the product of some integer with itself. For example, 1, 4, 9, and 16 are perfect squares while 3 and 11 are not.
+
+class Solution {
+    public int numSquares(int n) {
+        // Case 1: Check if n is a perfect square itself
+        if (isSquare(n)) {
+            return 1;
+        }
+        
+        // Case 2: Check if n matches Legendre's form 4^a * (8b + 7)
+        // If it does, it strictly requires 4 perfect squares
+        int temp = n;
+        while (temp % 4 == 0) {
+            temp /= 4;
+        }
+        if (temp % 8 == 7) {
+            return 4;
+        }
+        
+        // Case 3: Check if n can be decomposed into a sum of two perfect squares (i^2 + j^2 = n)
+        int limit = (int) Math.sqrt(n);
+        for (int i = 1; i <= limit; i++) {
+            int remainder = n - (i * i);
+            if (isSquare(remainder)) {
+                return 2;
+            }
+        }
+        
+        // Case 4: If it's not 1, 2, or 4, it must be 3
+        return 3;
+    }
+    
+    // Helper method to check if a number is a perfect square
+    private boolean isSquare(int num) {
+        int root = (int) Math.sqrt(num);
+        return root * root == num;
+    }
+}

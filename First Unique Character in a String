@@ -1,0 +1,30 @@
+Given a string s, find the first non-repeating character in it and return its index. If it does not exist, return -1.
+
+class Solution {
+    public int firstUniqChar(String s) {
+        int n = s.length();
+        
+        // Loop through each character in the string
+        for (int i = 0; i < n; i++) {
+            char c = s.charAt(i);
+            boolean isRepeated = false;
+            
+            // Nested loop: Check the ENTIRE string for a duplicate
+            for (int j = 0; j < n; j++) {
+                // Don't compare the character with itself at the same index
+                if (i != j && c == s.charAt(j)) {
+                    isRepeated = true;
+                    break; // Duplicate found, stop checking this character
+                }
+            }
+            
+            // If we checked the whole string and found no duplicate, it's unique!
+            if (!isRepeated) {
+                return i;
+            }
+        }
+        
+        // Return -1 if no unique character exists
+        return -1;
+    }
+}

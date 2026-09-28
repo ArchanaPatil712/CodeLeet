@@ -1,0 +1,66 @@
+According to Wikipedia's article: "The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970."
+
+The board is made up of an m x n grid of cells, where each cell has an initial state: live (represented by a 1) or dead (represented by a 0). Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) using the following four rules (taken from the above Wikipedia article):
+
+Any live cell with fewer than two live neighbors dies as if caused by under-population.
+Any live cell with two or three live neighbors lives on to the next generation.
+Any live cell with more than three live neighbors dies, as if by over-population.
+Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+The next state of the board is determined by applying the above rules simultaneously to every cell in the current state of the m x n grid board. In this process, births and deaths occur simultaneously.
+
+Given the current state of the board, update the board to reflect its next state.
+
+class Solution {
+    public void gameOfLife(int[][] board) {
+        if (board == null || board.length == 0) return;
+        
+        int m = board.length;
+        int n = board[0].length;
+        
+        // Direction arrays to easily scan all 8 neighbors
+        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
+        
+        // Pass 1: Analyze current states and apply temporary rules
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int liveNeighbors = 0;
+                
+                // Count live neighbors
+                for (int d = 0; d < 8; d++) {
+                    int ni = i + dx[d];
+                    int nj = j + dy[d];
+                    
+                    // Check boundaries and check if neighbor was originally alive (1 or 2)
+                    if (ni >= 0 && ni < m && nj >= 0 && nj < n) {
+                        if (board[ni][nj] == 1 || board[ni][nj] == 2) {
+                            liveNeighbors++;
+                        }
+                    }
+                }
+                
+                // Apply rules using the transition states
+                if (board[i][j] == 1) {
+                    if (liveNeighbors < 2 || liveNeighbors > 3) {
+                        board[i][j] = 2; // Live to Dead
+                    }
+                } else if (board[i][j] == 0) {
+                    if (liveNeighbors == 3) {
+                        board[i][j] = 3; // Dead to Live
+                    }
+                }
+            }
+        }
+        
+        // Pass 2: Clean up the board to get final 0s and 1s
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == 2) {
+                    board[i][j] = 0;
+                } else if (board[i][j] == 3) {
+                    board[i][j] = 1;
+                }
+            }
+        }
+    }
+}

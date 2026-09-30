@@ -1,0 +1,39 @@
+Given an integer array nums, return the length of the longest strictly increasing subsequence.
+
+import java.util.Arrays;
+
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        // This array will store the smallest tail of all increasing subsequences found so far
+        int[] tails = new int[nums.length];
+        int size = 0;
+        
+        for (int x : nums) {
+            int i = 0, j = size;
+            
+            // Binary search to find the correct position for x in tails
+            while (i != j) {
+                int mid = (i + j) / 2;
+                if (tails[mid] < x) {
+                    i = mid + 1;
+                } else {
+                    j = mid;
+                }
+            }
+            
+            // Update the element at the found position
+            tails[i] = x;
+            
+            // If x is larger than all elements in tails, extend the size
+            if (i == size) {
+                size++;
+            }
+        }
+        
+        return size;
+    }
+}

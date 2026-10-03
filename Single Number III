@@ -1,0 +1,29 @@
+Given an integer array nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once. You can return the answer in any order.
+You must write an algorithm that runs in linear runtime complexity and uses only constant extra space.
+
+class Solution {
+    public int[] singleNumber(int[] nums) {
+        // Step 1: XOR all elements to get (a ^ b)
+        int xorAll = 0;
+        for (int num : nums) {
+            xorAll ^= num;
+        }
+        
+        // Step 2: Extract the rightmost set bit
+        // Using bitwise AND with its two's complement
+        int rightmostSetBit = xorAll & -xorAll;
+        
+        // Step 3: Partition the numbers into two groups
+        int a = 0;
+        int b = 0;
+        for (int num : nums) {
+            if ((num & rightmostSetBit) != 0) {
+                a ^= num; // Group where the specific bit is 1
+            } else {
+                b ^= num; // Group where the specific bit is 0
+            }
+        }
+        
+        return new int[]{a, b};
+    }
+}

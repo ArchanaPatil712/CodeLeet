@@ -1,0 +1,51 @@
+You are given a string s. You can convert s to a palindrome by adding characters in front of it.
+Return the shortest palindrome you can find by performing this transformation.
+
+class Solution {
+    public String shortestPalindrome(String s) {
+        if (s == null || s.length() <= 1) {
+            return s;
+        }
+        
+        // Reverse the original string
+        String reversed = new StringBuilder(s).reverse().toString();
+        
+        // Create a temporary string combined with a special delimiter
+        // The delimiter ensures the prefix matching doesn't cross the boundary
+        String temp = s + "#" + reversed;
+        
+        // Compute the KMP Lookup Table (LPS Array) for the combined string
+        int[] lps = computeLPS(temp);
+        
+        // The last element in the LPS array gives the length of the longest palindromic prefix
+        int longestPalindromicPrefixLength = lps[temp.length() - 1];
+        
+        // Take the suffix that is not part of the palindrome, reverse it, and prepend it
+        String suffixToAdd = reversed.substring(0, s.length() - longestPalindromicPrefixLength);
+        
+        return suffixToAdd + s;
+    }
+    
+    private int[] computeLPS(String str) {
+        int n = str.length();
+        int[] lps = new int[n];
+        int len = 0;
+        int i = 1;
+        
+        while (i < n) {
+            if (str.charAt(i) == str.charAt(len)) {
+                len++;
+                lps[i] = len;
+                i++;
+            } else {
+                if (len != 0) {
+                    len = lps[len - 1];
+                } else {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+        return lps;
+    }
+}

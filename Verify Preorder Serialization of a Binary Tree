@@ -1,0 +1,27 @@
+class Solution {
+    public boolean isValidSerialization(String preorder) {
+        // Split the string into individual nodes
+        String[] nodes = preorder.split(",");
+        
+        // We start with 1 available slot for the root node
+        int slots = 1;
+        
+        for (String node : nodes) {
+            // A node must occupy a slot. If no slots are left, it's invalid.
+            if (slots <= 0) {
+                return false;
+            }
+            
+            // Each node (null or non-null) consumes 1 slot
+            slots--;
+            
+            // A non-null node creates 2 new child slots
+            if (!node.equals("#")) {
+                slots += 2;
+            }
+        }
+        
+        // A valid tree will perfectly fill all allocated slots
+        return slots == 0;
+    }
+}

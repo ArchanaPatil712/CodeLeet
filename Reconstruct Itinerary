@@ -1,0 +1,46 @@
+You are given a list of airline tickets where tickets[i] = [fromi, toi] represent the departure and the arrival airports of one flight. Reconstruct the itinerary in order and return it.
+All of the tickets belong to a man who departs from "JFK", thus, the itinerary must begin with "JFK". If there are multiple valid itineraries, you should return the itinerary that has the smallest lexical order when read as a single string.
+For example, the itinerary ["JFK", "LGA"] has a smaller lexical order than ["JFK", "LGB"].
+You may assume all tickets form at least one valid itinerary. You must use all the tickets once and only once.
+
+import java.util.*;
+
+class Solution {
+    // Adjacency list mapping each origin to a min-heap of destinations
+    private Map<String, PriorityQueue<String>> graph = new HashMap<>();
+    private List<String> itinerary = new LinkedList<>();
+
+    public List<String> findItinerary(List<List<String>> tickets) {
+        // Step 1: Build the graph. 
+        // Using a PriorityQueue guarantees destinations are sorted alphabetically.
+        for (List<String> ticket : tickets) {
+            String origin = ticket.get(0);
+            String dest = ticket.get(1);
+            graph.putIfAbsent(origin, new PriorityQueue<>());
+            graph.get(origin).add(dest);
+        }
+
+        // Step 2: Modified DFS (Hierholzer's Algorithm) starting at "JFK"
+        dfs("JFK");
+
+        // Step 3: Return the itinerary
+        return itinerary;
+    }
+
+    private void dfs(String airport) {
+        PriorityQueue<String> destinations = graph.get(airport);
+        
+        // While there are available flights out of this airport
+        while (destinations != null && !destinations.isEmpty()) {
+            // Poll removes the lexicographically smallest destination in O(log N)
+            String nextAirport = destinations.poll();
+            dfs(nextAirport);
+        }
+        
+        // Post-order insertion: Add to the front of the list
+        // This implicitly reverses the post-order sequence so we don't have to do it later
+        itinerary.add(0, airport);
+    }
+}
+
+

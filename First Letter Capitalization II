@@ -1,0 +1,134 @@
+Table: user_content
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| content_id   | int     |
+| content_text | varchar |
++--------------+---------+
+content_id is the unique key for this table.
+Each row contains a unique ID and the corresponding text content.
+A word is a maximal non-empty sequence of characters that does not contain a space.
+
+Write a solution to transform the text in the content_text column by applying the following rules to each word:
+
+If the word starts with a character that is not an English letter, leave the entire word unchanged.
+Otherwise, if the word consists of two or more non-empty parts of English letters connected by hyphens -, convert the first letter of each part to uppercase and the remaining letters of each part to lowercase. For example, top-rated becomes Top-Rated and FR-ONT-end becomes Fr-Ont-End.
+Otherwise, convert the first letter of the word to uppercase and all remaining English letters to lowercase. Any special characters remain unchanged.
+All other formatting and spacing must remain unchanged.
+
+Return the result table that includes both the original content_text and the modified text following the above rules.
+
+WITH RECURSIVE Split AS (
+    -- Step 1: Split the text into words by spaces, preserving empty spaces
+    SELECT 
+        content_id,
+        content_text AS original_text,
+        1 AS word_no,
+        SUBSTRING_INDEX(content_text, ' ', 1) AS word,
+        IF(INSTR(content_text, ' ') > 0, SUBSTRING(content_text, INSTR(content_text, ' ') + 1), '') AS remaining
+    FROM user_content
+    
+    UNION ALL
+    
+    SELECT 
+        content_id,
+        original_text,
+        word_no + 1,
+        SUBSTRING_INDEX(remaining, ' ', 1) AS word,
+        IF(INSTR(remaining, ' ') > 0, SUBSTRING(remaining, INSTR(remaining, ' ') + 1), '') AS remaining
+    FROM Split
+    WHERE remaining <> ''
+),
+WordRule AS (
+    -- Step 2: Classify each word into its respective rule type
+    SELECT 
+        content_id,
+        original_text,
+        word_no,
+        word,
+        CASE 
+            -- Rule 1: Starts with a non-letter -> Unchanged
+            WHEN word NOT REGEXP '^[a-zA-Z]' THEN 1
+            -- Rule 2: Valid hyphenated word consisting of non-empty letter parts
+            WHEN word REGEXP '^[a-zA-Z]+(-[a-zA-Z]+)+$' THEN 2
+            -- Rule 3: Otherwise (starts with a letter but fails rule 2 structure)
+            ELSE 3
+        END AS rule_type
+    FROM Split
+),
+CharSplit AS (
+    -- Step 3: Split each word into individual characters internally
+    SELECT 
+        content_id,
+        original_text,
+        word_no,
+        word,
+        rule_type,
+        1 AS char_pos,
+        SUBSTRING(word, 1, 1) AS chr,
+        SUBSTRING(word, 2) AS rem_word
+    FROM WordRule
+    WHERE word <> ''
+    
+    UNION ALL
+    
+    SELECT 
+        content_id,
+        original_text,
+        word_no,
+        word,
+        rule_type,
+        char_pos + 1,
+        SUBSTRING(rem_word, 1, 1) AS chr,
+        SUBSTRING(rem_word, 2) AS rem_word
+    FROM CharSplit
+    WHERE rem_word <> ''
+),
+ProcessedChars AS (
+    -- Step 4: Apply precise capitalization modifications per character
+    SELECT 
+        content_id,
+        original_text,
+        word_no,
+        char_pos,
+        CASE 
+            -- Rule 1: Keep completely unchanged
+            WHEN rule_type = 1 THEN chr
+            -- Rule 2: Capitalize first letter of word AND any letter following a hyphen
+            WHEN rule_type = 2 THEN 
+                IF(char_pos = 1 OR SUBSTRING(word, char_pos - 1, 1) = '-', UPPER(chr), LOWER(chr))
+            -- Rule 3: Capitalize ONLY the first letter of the word, lowercase the rest
+            ELSE 
+                IF(char_pos = 1, UPPER(chr), LOWER(chr))
+        END AS p_chr
+    FROM CharSplit
+),
+ReassembledWords AS (
+    -- Step 5: Merge processed characters back into words
+    SELECT 
+        content_id,
+        original_text,
+        word_no,
+        GROUP_CONCAT(p_chr ORDER BY char_pos SEPARATOR '') AS processed_word
+    FROM ProcessedChars
+    GROUP BY content_id, original_text, word_no
+    
+    UNION ALL
+    
+    -- Ensure sequential spaces (empty strings) are retained
+    SELECT 
+        content_id,
+        original_text,
+        word_no,
+        '' AS processed_word
+    FROM WordRule
+    WHERE word = ''
+)
+-- Step 6: Merge processed words back into the final string format
+SELECT 
+    content_id,
+    original_text,
+    GROUP_CONCAT(processed_word ORDER BY word_no SEPARATOR ' ') AS converted_text
+FROM ReassembledWords
+GROUP BY content_id, original_text;

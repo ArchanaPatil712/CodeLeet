@@ -1,0 +1,42 @@
+A super ugly number is a positive integer whose prime factors are in the array primes.
+Given an integer n and an array of integers primes, return the nth super ugly number.
+The nth super ugly number is guaranteed to fit in a 32-bit signed integer.
+
+class Solution {
+    public int nthSuperUglyNumber(int n, int[] primes) {
+        int k = primes.length;
+        int[] ugly = new int[n];
+        ugly[0] = 1;
+
+        // Track the index in the 'ugly' array for each prime
+        int[] pointers = new int[k];
+        
+        // Store the next candidate values using long to prevent integer overflow
+        long[] nextValues = new long[k];
+        for (int j = 0; j < k; j++) {
+            nextValues[j] = primes[j];
+        }
+
+        for (int i = 1; i < n; i++) {
+            // Find the smallest candidate for the next super ugly number
+            long minVal = Long.MAX_VALUE;
+            for (int j = 0; j < k; j++) {
+                if (nextValues[j] < minVal) {
+                    minVal = nextValues[j];
+                }
+            }
+            
+            ugly[i] = (int) minVal;
+
+            // Advance pointers for all primes that produced this minimum value
+            for (int j = 0; j < k; j++) {
+                if (nextValues[j] == minVal) {
+                    pointers[j]++;
+                    nextValues[j] = (long) primes[j] * ugly[pointers[j]];
+                }
+            }
+        }
+
+        return ugly[n - 1];
+    }
+}
